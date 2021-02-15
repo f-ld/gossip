@@ -1,18 +1,16 @@
 package parser
 
 import (
-	"github.com/stefankopieczek/gossip/base"
-	"github.com/stefankopieczek/gossip/log"
-	"github.com/stefankopieczek/gossip/utils"
-)
-
-import (
 	"bytes"
 	"fmt"
 	"strconv"
 	"strings"
 	"testing"
 	"time"
+
+	"github.com/f-ld/gossip/base"
+	"github.com/f-ld/gossip/log"
+	"github.com/f-ld/gossip/utils"
 )
 
 // Level of logs output during testing.
@@ -1203,7 +1201,7 @@ type paramInput struct {
 }
 
 func (data *paramInput) String() string {
-	return fmt.Sprintf("paramString=\"%s\", start=%c, sep=%c, end=%c, quoteValues=%b, permitSingletons=%b",
+	return fmt.Sprintf("paramString=\"%s\", start=%c, sep=%c, end=%c, quoteValues=%t, permitSingletons=%t",
 		data.paramString, data.start, data.sep, data.end, data.quoteValues, data.permitSingletons)
 }
 func (data *paramInput) evaluate() result {
@@ -1788,7 +1786,7 @@ func (expected *viaResult) equals(other result) (equal bool, reason string) {
 			return false, fmt.Sprintf("unexpected host '%s' in via entry %d - expected '%s'",
 				actualHop.Host, idx, expectedHop.Host)
 		} else if !utils.Uint16PtrEq(expectedHop.Port, actualHop.Port) {
-			return false, fmt.Sprintf("unexpected port '%d' in via entry %d - expected '%d'",
+			return false, fmt.Sprintf("unexpected port '%s' in via entry %d - expected '%s'",
 				uint16PtrStr(actualHop.Port), idx, uint16PtrStr(expectedHop.Port))
 		} else if !expectedHop.Params.Equals(actualHop.Params) {
 			return false, fmt.Sprintf("unexpected params '%s' in via entry %d - expected '%s'",

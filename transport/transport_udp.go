@@ -1,24 +1,29 @@
 package transport
 
 import (
-	"github.com/stefankopieczek/gossip/base"
-	"github.com/stefankopieczek/gossip/log"
-	"github.com/stefankopieczek/gossip/parser"
+	"net"
+
+	"github.com/f-ld/gossip/base"
+	"github.com/f-ld/gossip/log"
+	"github.com/f-ld/gossip/parser"
 )
 
-import (
-	"net"
-)
+const defaultTimeoutMs = 10000
 
 type Udp struct {
 	listeningPoints []*net.UDPConn
 	output          chan base.SipMessage
 	stop            bool
+	timeoutMs       int64
 }
 
 func NewUdp(output chan base.SipMessage) (*Udp, error) {
-	newUdp := Udp{listeningPoints: make([]*net.UDPConn, 0), output: output}
+	newUdp := Udp{listeningPoints: make([]*net.UDPConn, 0), output: output, timeoutMs: defaultTimeoutMs}
 	return &newUdp, nil
+}
+
+func (udp *Udp) SetProcessingTimeout(timeoutMs int64) {
+	udp.timeoutMs = timeoutMs
 }
 
 func (udp *Udp) Listen(address string) error {
@@ -68,7 +73,7 @@ func (udp *Udp) listen(conn *net.UDPConn) {
 		num, _, err := conn.ReadFromUDP(buffer)
 		if err != nil {
 			if udp.stop {
-				log.Info("Stopped listening for UDP on %s", conn.LocalAddr)
+				log.Info("Stopped listening for UDP on %s", conn.LocalAddr())
 				break
 			} else {
 				log.Severe("Failed to read from UDP buffer: " + err.Error())
@@ -78,7 +83,7 @@ func (udp *Udp) listen(conn *net.UDPConn) {
 
 		pkt := append([]byte(nil), buffer[:num]...)
 		go func() {
-			msg, err := parser.ParseMessage(pkt)
+			msg, err := parser.ParseMessage(pkt, udp.timeoutMs)
 			if err != nil {
 				log.Warn("Failed to parse SIP message: %s", err.Error())
 			} else {

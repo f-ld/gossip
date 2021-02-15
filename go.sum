@@ -1,4 +1,4 @@
 github.com/discoviking/fsm v0.0.0-20150126104936-f4a273feecca h1:cTTdXpkQ1aVbOOmHwdwtYuwUZcQtcMrleD1UXLWhAq8=
 github.com/discoviking/fsm v0.0.0-20150126104936-f4a273feecca/go.mod h1:W+3LQaEkN8qAwwcw0KC546sUEnX86GIT8CcMLZC4mG0=
-github.com/stefankopieczek/gossip v0.0.0-20161014194501-bf923f8025bc h1:QWCH33muhredPzdjM2G1RQXFfoYe8bRNtQljBx/IBIY=
-github.com/stefankopieczek/gossip v0.0.0-20161014194501-bf923f8025bc/go.mod h1:5EKv2Zo0wmj5T3VWA37dkZplpJa73RUChn2h72M7MoM=
+github.com/f-ld/gossip v0.0.0-20161014194501-bf923f8025bc h1:QWCH33muhredPzdjM2G1RQXFfoYe8bRNtQljBx/IBIY=
+github.com/f-ld/gossip v0.0.0-20161014194501-bf923f8025bc/go.mod h1:5EKv2Zo0wmj5T3VWA37dkZplpJa73RUChn2h72M7MoM=

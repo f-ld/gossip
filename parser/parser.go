@@ -1,18 +1,17 @@
 package parser
 
 import (
-	"github.com/stefankopieczek/gossip/base"
-	"github.com/stefankopieczek/gossip/log"
-	"github.com/stefankopieczek/gossip/utils"
-)
-
-import (
 	"bytes"
 	"fmt"
 	"strconv"
 	"strings"
+	"time"
 	"unicode"
 	"unicode/utf8"
+
+	"github.com/f-ld/gossip/base"
+	"github.com/f-ld/gossip/log"
+	"github.com/f-ld/gossip/utils"
 )
 
 // The whitespace characters recognised by the Augmented Backus-Naur Form syntax
@@ -71,7 +70,7 @@ func defaultHeaderParsers() map[string]HeaderParser {
 // This is more costly than reusing a parser, but is necessary when we do not
 // have a guarantee that all messages coming over a connection are from the
 // same endpoint (e.g. UDP).
-func ParseMessage(msgData []byte) (base.SipMessage, error) {
+func ParseMessage(msgData []byte, timeoutMs int64) (base.SipMessage, error) {
 	output := make(chan base.SipMessage, 0)
 	errors := make(chan error, 0)
 	parser := NewParser(output, errors, false)
@@ -83,6 +82,8 @@ func ParseMessage(msgData []byte) (base.SipMessage, error) {
 		return msg, nil
 	case err := <-errors:
 		return nil, err
+	case <-time.After(time.Duration(timeoutMs) * time.Millisecond):
+		return nil, fmt.Errorf("Message not completely received before %d ms timeout", timeoutMs)
 	}
 }
 

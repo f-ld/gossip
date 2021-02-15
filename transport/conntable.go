@@ -3,8 +3,8 @@ package transport
 import (
 	"time"
 
-	"github.com/stefankopieczek/gossip/log"
-	"github.com/stefankopieczek/gossip/timing"
+	"github.com/f-ld/gossip/log"
+	"github.com/f-ld/gossip/timing"
 )
 
 // Fields of connTable should only be modified by the dedicated goroutine called by Init().
@@ -60,12 +60,12 @@ func (t *connTable) manage() {
 				t.conns[addr].conn.Close()
 				delete(t.conns, addr)
 			} else {
-                // Due to a race condition, the socket has been updated since this expiry happened.
-                // Ignore the expiry since we already have a new socket for this address.
-                log.Warn("Ignored spurious expiry for address %s in conntable %p", t, addr)
-            }
+				// Due to a race condition, the socket has been updated since this expiry happened.
+				// Ignore the expiry since we already have a new socket for this address.
+				log.Warn("Ignored spurious expiry for address %s in conntable %p", addr, t)
+			}
 		case <-t.stop:
-			log.Info("Conntable %p stopped")
+			log.Info("Conntable %p stopped", t)
 			t.stopped = true
 			for _, watcher := range t.conns {
 				watcher.stop <- true
@@ -108,7 +108,7 @@ func (t *connTable) GetConn(addr string) *connection {
 	t.connRequests <- &connRequest{addr, responseChan}
 	conn := <-responseChan
 
-	log.Debug("Query connection for address %s returns %p", conn)
+	log.Debug("Query connection for address %s returns %p", addr, conn)
 	return conn
 }
 

@@ -5,9 +5,9 @@ import (
 	"fmt"
 	"net"
 
-	"github.com/stefankopieczek/gossip/base"
-	"github.com/stefankopieczek/gossip/log"
-	"github.com/stefankopieczek/gossip/parser"
+	"github.com/f-ld/gossip/base"
+	"github.com/f-ld/gossip/log"
+	"github.com/f-ld/gossip/parser"
 )
 
 type connection struct {
@@ -21,7 +21,7 @@ type connection struct {
 
 func NewConn(baseConn net.Conn, output chan base.SipMessage) *connection {
 	var isStreamed bool
-	switch baseConn.(type) {
+	switch t := baseConn.(type) {
 	case *net.UDPConn:
 		isStreamed = false
 	case *net.TCPConn:
@@ -29,7 +29,7 @@ func NewConn(baseConn net.Conn, output chan base.SipMessage) *connection {
 	case *tls.Conn:
 		isStreamed = true
 	default:
-		log.Severe("Conn object %v is not a known connection type. Assume it's a streamed protocol, but this may cause messages to be rejected")
+		log.Severe("Conn object %T is not a known connection type. Assume it's a streamed protocol, but this may cause messages to be rejected", t)
 	}
 	connection := connection{baseConn: baseConn, isStreamed: isStreamed}
 

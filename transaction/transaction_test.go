@@ -2,14 +2,15 @@ package transaction
 
 import (
 	"fmt"
-	"github.com/stefankopieczek/gossip/base"
-	"github.com/stefankopieczek/gossip/log"
-	"github.com/stefankopieczek/gossip/parser"
-	"github.com/stefankopieczek/gossip/timing"
-	"github.com/stefankopieczek/gossip/transport"
 	"strings"
 	"testing"
 	"time"
+
+	"github.com/f-ld/gossip/base"
+	"github.com/f-ld/gossip/log"
+	"github.com/f-ld/gossip/parser"
+	"github.com/f-ld/gossip/timing"
+	"github.com/f-ld/gossip/transport"
 )
 
 // UTs for transaction layer.
@@ -165,7 +166,7 @@ func assertNoError(t *testing.T, err error) {
 }
 
 func message(rawMsg []string) (base.SipMessage, error) {
-	return parser.ParseMessage([]byte(strings.Join(rawMsg, "\r\n")))
+	return parser.ParseMessage([]byte(strings.Join(rawMsg, "\r\n")), 10000)
 }
 
 func request(rawMsg []string) (*base.Request, error) {
@@ -179,7 +180,7 @@ func request(rawMsg []string) (*base.Request, error) {
 	case *base.Request:
 		return msg.(*base.Request), nil
 	default:
-		return nil, fmt.Errorf("%s is not a request", msg.Short)
+		return nil, fmt.Errorf("%s is not a request", msg.Short())
 	}
 }
 
@@ -194,7 +195,7 @@ func response(rawMsg []string) (*base.Response, error) {
 	case *base.Response:
 		return msg.(*base.Response), nil
 	default:
-		return nil, fmt.Errorf("%s is not a response", msg.Short)
+		return nil, fmt.Errorf("%s is not a response", msg.Short())
 	}
 }
 
